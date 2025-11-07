@@ -1,0 +1,156 @@
+﻿/* src/index.css */
+
+/* 🎨 Paleta Pastel */
+:root {
+  --verde-oliva: #708c69;
+  --rosa-viejo: #cbaea2;
+  --beige-pastel: #f5f1eb;
+  --marron-suave: #4f4b47;
+  --blanco-caldo: #faf8f5;
+}
+
+/* Estilos globales */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", "Arial", sans-serif;
+  background-color: var(--blanco-caldo);
+  color: var(--marron-suave);
+  height: 100%;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Botones generales */
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+
+
+
+/* Resultados e IA */
+.results-container {
+  margin-top: 30px;
+  background-color: #fffdf9;
+  border: 1px solid #e8ded3;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.advice-block {
+  margin-top: 15px;
+  background-color: #f5f1eb;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.advice-block h4 {
+  color: #708c69;
+  margin-bottom: 5px;
+}
+
+.whatsapp-button {
+  display: inline-block;
+  background-color: #25d366;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 30px;
+  text-decoration: none;
+  margin-top: 10px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.whatsapp-button:hover {
+  background-color: #128c7e;
+}
+
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Selector de sistema (BPS / Caja) */
+.system-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  background-color: var(--beige-pastel);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.system-button {
+  flex: 1;
+  padding: 12px;
+  font-size: 1.1em;
+  font-weight: 500;
+  background-color: #e8ded3;
+  color: var(--marron-suave);
+}
+
+.system-button.active {
+  background-color: var(--verde-oliva);
+  color: white;
+}
+
+/* Botón de cálculo */
+.calculate-button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: white;
+  background-color: var(--verde-oliva);
+  border-radius: 10px;
+}
+
+.calculate-button:hover {
+  background-color: #7ea977;
+}
+
+/* Resultados */
+.result-item {
+  margin: 10px 0;
+  padding: 8px 0;
+  border-bottom: 1px dashed #d3c4b6;
+}
+
+.result-value {
+  float: right;
+  font-weight: bold;
+  color: var(--verde-oliva);
+}
+
+/* Footer fijo */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--beige-pastel);
+  color: var(--marron-suave);
+  text-align: center;
+  font-size: 0.9em;
+  padding: 10px 0;
+  border-top: 1px solid #d6c4b8;
+  z-index: 100;
+}
+
+footer a {
+  color: var(--verde-oliva);
+  text-decoration: none;
+  font-weight: 500;
+}
