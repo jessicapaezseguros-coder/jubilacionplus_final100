@@ -1,0 +1,92 @@
+/* ===== CONTENEDOR GENERAL ===== */
+
+.st-thermometer {
+  background-color: #faf7f0;             /* beige simulador */
+  border: 2px solid #c9a449;             /* dorado institucional */
+  border-radius: 18px;
+  padding: 20px 26px 22px;
+  box-shadow: 0 8px 18px rgba(47, 54, 36, 0.16);
+  font-family: "Montserrat", sans-serif;
+  color: #2f3624;
+}
+
+/* ===== TÍTULO ===== */
+
+.st-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+/* ===== BARRA Y SEGMENTOS ===== */
+
+.st-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  margin-top: 4px;
+}
+
+.st-segment {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background-color: #f4ecd8;            /* beige apagado */
+  transition: background-color 0.25s ease;
+}
+
+/* Aquí solo se decide si el segmento está encendido o no */
+.st-segment--active {
+  /* el color final viene por combinación con la clase de nivel */
+}
+
+/* ===== COLORES POR NIVEL ===== */
+/* crítico → rojo suave */
+.st-thermometer--critico .st-segment--active {
+  background-color: #d6564a;
+}
+
+/* vulnerable / riesgo intermedio → amarillo */
+.st-thermometer--vulnerable .st-segment--active {
+  background-color: #f2c94c;
+}
+
+/* moderado → naranja */
+.st-thermometer--moderado .st-segment--active {
+  background-color: #f29b3d;
+}
+
+/* estable → verde suave */
+.st-thermometer--estable .st-segment--active {
+  background-color: #7abf72;
+}
+
+/* ===== TEXTOS DE RESULTADO ===== */
+
+.st-label {
+  margin: 4px 0 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.st-description {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+  .st-thermometer {
+    padding: 16px 18px 18px;
+  }
+
+  .st-title {
+    font-size: 1rem;
+  }
+
+  .st-description {
+    font-size: 0.86rem;
+  }
+}

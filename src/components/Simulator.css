@@ -174,3 +174,11 @@ select option:hover {
     width: 70%;
   }
 }
+/* ===== ESCALA GENERAL PARA CELULARES PEQUEÑOS ===== */
+@media (max-width: 480px) {
+  html {
+    /* Deja de usar 16px como base y pasa a ~14px
+       => todo lo que está en rem se achica en la misma proporción */
+    font-size: 14px;
+  }
+}

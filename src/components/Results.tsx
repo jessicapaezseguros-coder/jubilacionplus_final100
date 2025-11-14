@@ -1,5 +1,6 @@
 import React from "react";
 import "./Results.css";
+import StabilityThermometer from "./StabilityThermometer";
 
 const Results: React.FC = () => {
   return (
@@ -14,12 +15,22 @@ const Results: React.FC = () => {
           <p>
             <strong>Complemento AFAP:</strong> $18.420
           </p>
+          <p className="small-text">
+            El complemento AFAP se muestra de forma ilustrativa, como un
+            porcentaje adicional de la jubilación base, para reflejar que el
+            ahorro individual puede sumar un ingreso extra al retiro. No
+            sustituye tu estado de cuenta ni una proyección oficial de la AFAP.
+          </p>
           <p>
             <strong>Total proyectado:</strong> $63.700
           </p>
+          <p>
+            <strong>Cobertura estimada:</strong> 72%
+          </p>
           <p className="small-text">
-            Este valor se estima considerando aportes constantes y edad de
-            retiro declarada.
+            Este resultado es ilustrativo y se calcula con los datos que
+            ingresaste. No sustituye los simuladores oficiales ni genera
+            derechos jubilatorios.
           </p>
         </div>
 
@@ -36,24 +47,11 @@ const Results: React.FC = () => {
 
         {/* TARJETA 3 - TERMÓMETRO */}
         <div className="result-card">
-          <h3>Termómetro de estabilidad</h3>
-
-          <div className="thermo-bar">
-            {[0, 1, 2, 3, 4].map((idx) => (
-              <div
-                key={idx}
-                className={`thermo-segment ${idx < 2 ? "filled" : ""}`}
-              />
-            ))}
-          </div>
-
-          <p className="thermo-label">
-            <strong>Inestable</strong>
-          </p>
-          <p className="small-text">
-            Tu situación es moderada. Con algunos años adicionales o un plan de
-            seguros personales podés alcanzar mayor equilibrio.
-          </p>
+          <StabilityThermometer
+            level="moderado"
+            label="Moderado"
+            description="Tu situación es moderada. Con algunos años adicionales o un plan de seguros personales podés alcanzar mayor equilibrio."
+          />
 
           <button
             className="new-calc-btn"
