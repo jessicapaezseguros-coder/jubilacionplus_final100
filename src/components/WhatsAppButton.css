@@ -35,3 +35,10 @@
   transform: translateY(-2px) scale(1.03);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
+
+/* --- NUEVO: ocultar el botón en móviles --- */
+@media (max-width: 768px) {
+  .whatsapp-button {
+    display: none;
+  }
+}
