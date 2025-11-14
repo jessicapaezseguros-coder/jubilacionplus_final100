@@ -1,0 +1,37 @@
+/* src/components/App.css */
+
+.app {
+  font-family: "Montserrat", sans-serif;
+  background-color: #faf7f0; /* Beige cálido */
+  color: #2f3624;           /* Verde oscuro */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  /* Deja espacio para el header fijo y ayuda al centrado visual */
+  padding-top: 100px;
+}
+
+/* En móviles el header ocupa un poco más visualmente */
+@media (max-width: 768px) {
+  .app {
+    padding-top: 120px;
+  }
+}
+
+/* Clase de aparición suave para secciones */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.6s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

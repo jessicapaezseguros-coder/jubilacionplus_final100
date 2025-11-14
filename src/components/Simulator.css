@@ -1,0 +1,176 @@
+/* src/styles/Simulator.css */
+
+.simulator-wrapper {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 40px;
+
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 80px;
+
+  /* Altura mínima para que el bloque quede centrado
+     entre header y parte baja de la pantalla */
+  min-height: calc(100vh - 220px);
+  align-items: flex-start;
+  align-content: center;
+}
+
+.simulator-column {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.simulator-card {
+  background: #faf7f0;           /* Beige */
+  border: 2px solid #c9a449;     /* Dorado */
+  border-radius: 18px;
+  padding: 28px 32px 32px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 10px 18px rgba(47, 54, 36, 0.18); /* sombra más profunda hacia abajo */
+}
+
+/* Título */
+.sim-title {
+  text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 18px;
+  color: #2f3624;
+  font-weight: 700;
+}
+
+/* Botones BPS / Caja */
+.regimen-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.regimen-btn {
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 2px solid #c9a449;
+  background: #faf7f0;
+  color: #2f3624;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease,
+    transform 0.1s ease;
+}
+
+.regimen-btn.active {
+  background: #c9a449;
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(47, 54, 36, 0.25);
+  transform: translateY(-1px);
+}
+
+.regimen-btn:hover {
+  filter: brightness(0.97);
+}
+
+/* Campos de formulario */
+label {
+  font-weight: 600;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2f3624;
+}
+
+input,
+select {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #c9a449;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-family: "Montserrat", sans-serif;
+  background-color: #ffffff;
+  color: #2f3624;
+  outline: none;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+input:focus,
+select:focus {
+  border-color: #c9a449;
+  box-shadow: 0 0 6px rgba(201, 164, 73, 0.6);
+}
+
+/* Opciones del select con paleta institucional */
+option {
+  color: #2f3624;
+  background: #ffffff;
+}
+
+select option:checked,
+select option:hover {
+  background-color: #e8f0e4; /* Verde pastel */
+  color: #2f3624;
+}
+
+/* Botón Calcular – dorado, centrado, con cuerpo */
+.btn-calcular {
+  display: block;
+  width: 60%;
+  max-width: 240px;
+  margin: 20px auto 0;
+  background-color: #c9a449 !important;
+  border: none;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.btn-calcular:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 3px 8px rgba(47, 54, 36, 0.25);
+  transform: translateY(-1px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .simulator-wrapper {
+    grid-template-columns: 1fr;
+    padding: 32px 24px 40px;
+    gap: 28px;
+    margin: 40px auto 40px;
+    min-height: auto;
+    align-content: flex-start;
+  }
+
+  .simulator-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .simulator-wrapper {
+    padding: 28px 16px 36px;
+  }
+
+  .sim-title {
+    font-size: 1.25rem;
+  }
+
+  .btn-calcular {
+    width: 70%;
+  }
+}

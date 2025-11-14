@@ -1,25 +1,23 @@
-﻿// src/components/Header.tsx
 import React from "react";
-import "../Styles/Header.css";
-import logo from "/logo_jubilacion_plus_1024.png";
+import "./Header.css";
+import logo1x from "../assets/logo_jubilacionplus.png";
+import logo2x from "../assets/logo_jubilacionplus_2x.png";
 
-const Header: React.FC = () => {
+export default function Header() {
   return (
-    <header className="app-header">
-      <div className="header-content">
-        <img src={logo} alt="Logo Jubilación Plus" className="app-logo" />
-        <div className="header-text">
-          <h1 className="main-title">JUBILACIÓN +</h1>
-          <h2 className="script-title">Anticipate</h2>
-          <p className="subtitle">
-            LIC. JESSICA PÁEZ <br />
-            ASESORA TÉCNICA EN SEGUROS PERSONALES
-          </p>
-          <p className="tagline">Tu Futuro. Tu Plan.</p>
+    <header className="header">
+      <div className="header-container">
+        <div className="header-logo-wrapper">
+          <img
+            src={logo1x}
+            srcSet={`${logo1x} 1x, ${logo2x} 2x`}
+            alt="Jubilación+ – Herramienta Educativa con IA"
+            className="header-logo"
+          />
         </div>
+
+        <span className="header-byline">– by Lic. Jessica Páez</span>
       </div>
     </header>
   );
-};
-
-export default Header;
+}

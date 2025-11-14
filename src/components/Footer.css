@@ -1,0 +1,28 @@
+footer {
+  background-color: #2f3624;
+  color: #faf7f0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 22px 0;
+  border-top: 2px solid #c9a449;
+  line-height: 1.5;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 90;
+}
+
+footer .white {
+  color: #faf7f0;
+  font-weight: 500;
+}
+
+footer .gold {
+  color: #c9a449;
+  font-weight: 600;
+}
+
+footer p {
+  margin: 4px 0;
+}
