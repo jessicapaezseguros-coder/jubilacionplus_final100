@@ -1,174 +1,326 @@
+// -----------------------------------------------------------------------------
+// SIMULATOR.TSX – Pantalla 1 restaurada + lógica BPS y CJPPU nueva
+// Estética congelada integrada (usa Simulator.css ya restaurado)
+// -----------------------------------------------------------------------------
+
 import React, { useState } from "react";
-import QuestionsColumn from "./QuestionsColumn";
-import Tooltip from "./Tooltip";
-import Results from "./Results";
 import "./Simulator.css";
 
-type Regimen = "BPS" | "CP";
+import { AFAPS_HABILITADAS, MIN_RETIRO } from "../config/fixed";
+import {
+  calcularJubilacionBpsLegal,
+  calcularRentaAfapEducativa,
+} from "../config/BpsLegal";
 
-const ESCALONES_CAJA = [
-  { value: "1esp", label: "1ra. Especial – cuota unificada $ 3.241" },
-  { value: "1", label: "1ra – cuota unificada $ 6.447" },
-  { value: "2", label: "2da – cuota unificada $ 12.196" },
-  { value: "3", label: "3ra – cuota unificada $ 17.282" },
-  { value: "4", label: "4ta – cuota unificada $ 21.679" },
-  { value: "5", label: "5ta – cuota unificada $ 25.383" },
-  { value: "6", label: "6ta – cuota unificada $ 28.434" },
-  { value: "7", label: "7ma – cuota unificada $ 30.822" },
-  { value: "8", label: "8va – cuota unificada $ 32.506" },
-  { value: "9", label: "9na – cuota unificada $ 33.527" },
-  { value: "10", label: "10ma – cuota unificada $ 33.855" },
-];
+import {
+  determinarTipoEscala,
+  obtenerEscalonCJPPUPorId,
+} from "../config/escalasCJPPU";
+
+import QuestionsColumn from "./QuestionsColumn";
+import Results from "./Results";
 
 const Simulator: React.FC = () => {
-  const [regimen, setRegimen] = useState<Regimen>("BPS");
+  // ---------------------------------------------------------------------------
+  // ESTADOS GENERALES
+  // ---------------------------------------------------------------------------
 
-  const [form, setForm] = useState({
-    edad: "",
-    retiro: "",
-    aportes: "",
+  const [modo, setModo] = useState<"bps" | "caja">("bps");
+  const [pantalla, setPantalla] = useState<1 | 2>(1);
+
+  // ------------------------------- FORM BPS -----------------------------------
+
+  const [formBps, setFormBps] = useState({
+    edadActual: "",
+    edadRetiro: "",
+    añosAporte: "",
     ingreso: "",
     aportaAfap: "No",
-    afap: "",
-    escalonCaja: "",
   });
 
-  const [showResults, setShowResults] = useState(false);
+  const handleBps =
+    (campo: string) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      setFormBps((prev) => ({ ...prev, [campo]: e.target.value }));
+    };
 
-  const handleCalculate = () => {
-    // más adelante se puede usar form + regimen para el cálculo real
-    setShowResults(true);
+  // ------------------------------- FORM CAJA ----------------------------------
+
+  const [formCaja, setFormCaja] = useState({
+    nacimiento: "",
+    habilitacion: "",
+    categoria: "",
+    anio: "2025",
+    proyeccion: "No",
+    aportaAfap: "No",
+  });
+
+  const handleCaja =
+    (campo: string) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      setFormCaja((prev) => ({ ...prev, [campo]: e.target.value }));
+    };
+
+  // ------------------------------- ERRORES ------------------------------------
+
+  const [errorIngreso, setErrorIngreso] = useState("");
+  const [errorEdad, setErrorEdad] = useState("");
+
+  // ------------------------------- RESULTADOS ---------------------------------
+
+  const [resultados, setResultados] = useState<any>(null);
+
+  // ---------------------------------------------------------------------------
+  // CALCULAR
+  // ---------------------------------------------------------------------------
+
+  const handleCalcular = () => {
+    // ===================== BPS =====================
+    if (modo === "bps") {
+      const edadRetiro = Number(formBps.edadRetiro);
+
+      if (edadRetiro < MIN_RETIRO) {
+        setErrorEdad(`Para la simulación se exige mínimo ${MIN_RETIRO} años.`);
+        return;
+      }
+      setErrorEdad("");
+
+      // LIMPIAR 0 A LA IZQUIERDA
+      const ingresoNum = Number((formBps.ingreso || "").replace(/^0+(?=\d)/, ""));
+
+      if (isNaN(ingresoNum) || ingresoNum <= 0) {
+        setErrorIngreso("El ingreso mensual debe ser mayor a 0.");
+        return;
+      }
+      setErrorIngreso("");
+
+      const añosAporte = Number(formBps.añosAporte) || 0;
+
+      const base = calcularJubilacionBpsLegal(ingresoNum, añosAporte);
+
+      const afap =
+        formBps.aportaAfap === "Sí"
+          ? calcularRentaAfapEducativa(ingresoNum * 0.2)
+          : 0;
+
+      setResultados({
+        modo: "bps",
+        proyeccionBps: base,
+        complementoAfap: afap,
+        total: base + afap,
+        estabilidad:
+          añosAporte < 20 ? 0 : añosAporte >= 30 ? 80 : 40 /* educativa */,
+        detalle: {
+          ingreso: ingresoNum,
+          añosAporte,
+        },
+      });
+
+      setPantalla(2);
+      return;
+    }
+
+    // ===================== CAJA PROFESIONALES =====================
+
+    const nacimiento = Number(formCaja.nacimiento);
+    const habilitacion = Number(formCaja.habilitacion);
+    const anio = Number(formCaja.anio);
+
+    if (!nacimiento || !habilitacion) return;
+
+    const edadRetiro = anio - nacimiento;
+
+    if (edadRetiro < MIN_RETIRO) {
+      setErrorEdad(`Para la simulación se exige mínimo ${MIN_RETIRO} años.`);
+      return;
+    }
+    setErrorEdad("");
+
+    const tipoEscala = determinarTipoEscala(habilitacion, nacimiento);
+
+    const fila = obtenerEscalonCJPPUPorId(
+      anio as any,
+      tipoEscala,
+      formCaja.categoria
+    );
+
+    if (!fila) return;
+
+    const ficto = fila.ficto;
+    const cuota = fila.cuota;
+
+    setResultados({
+      modo: "caja",
+      ficto,
+      cuota,
+      estabilidad: fila.id <= "59-7" ? 40 : 70,
+      detalle: {
+        nacimiento,
+        habilitacion,
+        categoria: formCaja.categoria,
+        anio,
+      },
+    });
+
+    setPantalla(2);
   };
 
-  if (showResults) {
-    return <Results />;
-  }
+  // ---------------------------------------------------------------------------
+  // NUEVO CÁLCULO
+  // ---------------------------------------------------------------------------
 
-  return (
-    <div className="simulator-wrapper">
-      {/* COLUMNA IZQUIERDA – FORMULARIO */}
-      <div className="simulator-column">
-        <div className="simulator-card fade-in">
-          <h2 className="sim-title">Simulá tu jubilación</h2>
+  const handleNuevo = () => {
+    setPantalla(1);
+  };
 
-          {/* Botones BPS / Caja */}
-          <div className="regimen-toggle">
-            <button
-              type="button"
-              className={`regimen-btn ${regimen === "BPS" ? "active" : ""}`}
-              onClick={() => setRegimen("BPS")}
-            >
-              BPS
-            </button>
-            <button
-              type="button"
-              className={`regimen-btn ${regimen === "CP" ? "active" : ""}`}
-              onClick={() => setRegimen("CP")}
-            >
-              Caja de Profesionales
-            </button>
-          </div>
+  // ---------------------------------------------------------------------------
+  // RENDER PANTALLA 1
+  // ---------------------------------------------------------------------------
 
+  const renderPantalla1 = () => (
+    <div className="sim-wrapper fade-in">
+      {/* TABS */}
+      <div className="tabs">
+        <button
+          className={modo === "bps" ? "activo" : ""}
+          onClick={() => setModo("bps")}
+        >
+          BPS
+        </button>
+        <button
+          className={modo === "caja" ? "activo" : ""}
+          onClick={() => setModo("caja")}
+        >
+          Caja de Profesionales
+        </button>
+      </div>
+
+      {/* FORMULARIO BPS */}
+      {modo === "bps" && (
+        <div className="form-box">
           <label>Edad actual</label>
           <input
             type="number"
-            value={form.edad}
-            onChange={(e) => setForm({ ...form, edad: e.target.value })}
+            value={formBps.edadActual}
+            onChange={handleBps("edadActual")}
           />
 
           <label>Edad de retiro</label>
           <input
             type="number"
-            value={form.retiro}
-            onChange={(e) => setForm({ ...form, retiro: e.target.value })}
+            value={formBps.edadRetiro}
+            onChange={handleBps("edadRetiro")}
           />
+          {errorEdad && <p className="error">{errorEdad}</p>}
 
-          <label>Años aportados hasta la fecha</label>
+          <label>Años aportados</label>
           <input
             type="number"
-            value={form.aportes}
-            onChange={(e) => setForm({ ...form, aportes: e.target.value })}
+            value={formBps.añosAporte}
+            onChange={handleBps("añosAporte")}
           />
 
-          {/* Campo variable según régimen */}
-          {regimen === "BPS" ? (
-            <>
-              <label>Ingreso mensual líquido ($)</label>
-              <input
-                type="number"
-                value={form.ingreso}
-                onChange={(e) =>
-                  setForm({ ...form, ingreso: e.target.value })
-                }
-              />
-            </>
-          ) : (
-            <>
-              <label>Escalón de aporte (cuota unificada)</label>
-              <select
-                value={form.escalonCaja}
-                onChange={(e) =>
-                  setForm({ ...form, escalonCaja: e.target.value })
-                }
-              >
-                <option value="">Seleccione...</option>
-                {ESCALONES_CAJA.map((esc) => (
-                  <option key={esc.value} value={esc.value}>
-                    {esc.label}
-                  </option>
-                ))}
-              </select>
-            </>
-          )}
-
-          <label>
-            ¿Aporta a AFAP?
-            <Tooltip
-              text="💡 El Ahorro AFAP es el dinero que tenés acumulado en tu cuenta individual dentro de una administradora. Proviene de una parte de tus aportes jubilatorios que se invierte mes a mes. Este valor refleja el ahorro estimado al momento del retiro, no la jubilación o renta futura que pueda generarse."
-            />
-          </label>
-          <select
-            value={form.aportaAfap}
+          <label>Ingreso mensual líquido ($)</label>
+          <input
+            type="number"
+            value={formBps.ingreso}
             onChange={(e) =>
-              setForm({ ...form, aportaAfap: e.target.value })
+              setFormBps((prev) => ({
+                ...prev,
+                ingreso: e.target.value.replace(/^0+(?=\d)/, ""),
+              }))
             }
+          />
+          {errorIngreso && <p className="error">{errorIngreso}</p>}
+
+          <label>¿Aporta a AFAP?</label>
+          <select
+            value={formBps.aportaAfap}
+            onChange={handleBps("aportaAfap")}
+          >
+            <option>No</option>
+            <option>Sí</option>
+          </select>
+        </div>
+      )}
+
+      {/* FORMULARIO CAJA */}
+      {modo === "caja" && (
+        <div className="form-box">
+          <label>Año de nacimiento</label>
+          <input
+            type="number"
+            value={formCaja.nacimiento}
+            onChange={handleCaja("nacimiento")}
+          />
+
+          <label>Año de habilitación profesional</label>
+          <input
+            type="number"
+            value={formCaja.habilitacion}
+            onChange={handleCaja("habilitacion")}
+          />
+
+          <label>Año a simular</label>
+          <select value={formCaja.anio} onChange={handleCaja("anio")}>
+            <option>2025</option>
+            <option>2026</option>
+            <option>2027</option>
+            <option>2028</option>
+          </select>
+
+          <label>Categoría / Cuota</label>
+          <select
+            value={formCaja.categoria}
+            onChange={handleCaja("categoria")}
+          >
+            <option value="">Seleccioná…</option>
+            {Array.from({ length: 15 }).map((_, idx) => (
+              <option key={idx} value={`59${idx + 1}`}>
+                59-{idx + 1}
+              </option>
+            ))}
+          </select>
+
+          <label>Proyección educativa</label>
+          <select
+            value={formCaja.proyeccion}
+            onChange={handleCaja("proyeccion")}
           >
             <option>No</option>
             <option>Sí</option>
           </select>
 
-          {form.aportaAfap === "Sí" && (
-            <>
-              <label>Seleccione su AFAP</label>
-              <select
-                value={form.afap}
-                onChange={(e) =>
-                  setForm({ ...form, afap: e.target.value })
-                }
-              >
-                <option value="">Seleccione...</option>
-                <option value="sura">SURA</option>
-                <option value="republica">República AFAP</option>
-                <option value="integracion">Integración</option>
-                <option value="union">Unión Capital</option>
-              </select>
-            </>
-          )}
-
-          <button
-            className="btn-calcular"
-            type="button"
-            onClick={handleCalculate}
+          <label>¿Aporta a AFAP?</label>
+          <select
+            value={formCaja.aportaAfap}
+            onChange={handleCaja("aportaAfap")}
           >
-            Calcular
-          </button>
+            <option>No</option>
+            <option>Sí</option>
+          </select>
         </div>
-      </div>
+      )}
 
-      {/* COLUMNA DERECHA – BLOQUE PREGUNTAS / IA */}
+      {/* COLUMNA DERECHA: PREGUNTAS IA */}
       <QuestionsColumn />
+
+      {/* BOTÓN CALCULAR */}
+      <button className="calcular" onClick={handleCalcular}>
+        Calcular
+      </button>
     </div>
   );
+
+  // ---------------------------------------------------------------------------
+  // RETORNO FINAL
+  // ---------------------------------------------------------------------------
+
+  if (pantalla === 2 && resultados) {
+    return <Results datos={resultados} nuevoCalculo={handleNuevo} />;
+  }
+
+  return renderPantalla1();
 };
 
 export default Simulator;

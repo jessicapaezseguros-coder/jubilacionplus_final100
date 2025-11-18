@@ -1,25 +1,27 @@
 import React, { useState } from "react";
 import "./Tooltip.css";
 
-interface TooltipProps {
+type TooltipProps = {
   text: string;
-}
-
-const Tooltip: React.FC<TooltipProps> = ({ text }) => {
-  const [visible, setVisible] = useState(false);
-
-  // Dentro del componente Tooltip
-return (
-  <div
-    className="tooltip-container"
-    onMouseEnter={() => setVisible(true)}
-    onMouseLeave={() => setVisible(false)}
-    onTouchStart={() => setVisible(!visible)}
-  >
-    <span className="tooltip-icon">i</span>
-    {visible && <div className="tooltip-text">{text}</div>}
-  </div>
-);
 };
 
-export default Tooltip;
+export default function Tooltip({ text }: TooltipProps) {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <span
+      className="tooltip-wrapper"
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
+      onClick={() => setVisible(!visible)} /* móvil */
+    >
+      <span className="tooltip-icon">ℹ️</span>
+
+      {visible && (
+        <span className="tooltip-bubble fade-in-tooltip">
+          {text}
+        </span>
+      )}
+    </span>
+  );
+}

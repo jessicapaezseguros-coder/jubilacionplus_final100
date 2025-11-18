@@ -1,107 +1,129 @@
+// -----------------------------------------------------------------------------
+// Results.tsx – Pantalla 2 restaurada (estética congelada + botón PDF)
+// Compatible con toda la lógica nueva y con StabilityThermometer.
+// -----------------------------------------------------------------------------
+
 import React from "react";
 import "./Results.css";
 import StabilityThermometer from "./StabilityThermometer";
+import { descargarReportePDF } from "../utils/reportePDF";
 
-const Results: React.FC = () => {
+interface Props {
+  datos: any;
+  nuevoCalculo: () => void;
+}
+
+const Results: React.FC<Props> = ({ datos, nuevoCalculo }) => {
+  const { modo } = datos;
+
+  // ---------------------------- FORMATO ----------------------------
+  const formato = (num: number) =>
+    num?.toLocaleString("es-UY", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+
+  // ---------------------------- BLOQUES ----------------------------
+
+  const bloqueBps = (
+    <>
+      <div className="tarjeta">
+        <h3>Jubilación estimada BPS</h3>
+        <p className="monto-destacado">${formato(datos.proyeccionBps)}</p>
+      </div>
+
+      <div className="tarjeta">
+        <h3>Complemento AFAP</h3>
+        <p className="monto-destacado">${formato(datos.complementoAfap)}</p>
+      </div>
+
+      <div className="tarjeta total">
+        <h3>Total estimado</h3>
+        <p className="monto-destacado total-monto">${formato(datos.total)}</p>
+      </div>
+    </>
+  );
+
+  const bloqueCaja = (
+    <>
+      <div className="tarjeta">
+        <h3>Sueldo ficto</h3>
+        <p className="monto-destacado">${formato(datos.ficto)}</p>
+      </div>
+
+      <div className="tarjeta">
+        <h3>Cuota mensual</h3>
+        <p className="monto-destacado">${formato(datos.cuota)}</p>
+      </div>
+
+      <div className="tarjeta total">
+        <h3>Estabilidad Proyectada</h3>
+        <p className="monto-destacado total-monto">
+          {datos.estabilidad}%
+        </p>
+      </div>
+    </>
+  );
+
+  // ---------------------------- RENDER ----------------------------
+
   return (
-    <div className="results-wrapper">
-      <div className="results-grid fade-in">
-        {/* TARJETA 1 - RESULTADOS ESTIMADOS */}
-        <div className="result-card">
-          <h3>Resultados estimados</h3>
-          <p>
-            <strong>Proyección BPS:</strong> $45.280
-          </p>
-          <p>
-            <strong>Complemento AFAP:</strong> $18.420
-          </p>
-          <p className="small-text">
-            El complemento AFAP se muestra de forma ilustrativa, como un
-            porcentaje adicional de la jubilación base, para reflejar que el
-            ahorro individual puede sumar un ingreso extra al retiro. No
-            sustituye tu estado de cuenta ni una proyección oficial de la AFAP.
-          </p>
-          <p>
-            <strong>Total proyectado:</strong> $63.700
-          </p>
-          <p>
-            <strong>Cobertura estimada:</strong> 72%
-          </p>
-          <p className="small-text">
-            Este resultado es ilustrativo y se calcula con los datos que
-            ingresaste. No sustituye los simuladores oficiales ni genera
-            derechos jubilatorios.
-          </p>
+    <div className="results-wrapper fade-in">
+      <h2 className="titulo-principal">Resultados</h2>
+
+      <div className="grid-resultados">
+        {/* COLUMNA 1 */}
+        <div className="columna-izq">
+          {modo === "bps" ? bloqueBps : bloqueCaja}
         </div>
 
-        {/* TARJETA 2 - CONSEJOS IA */}
-        <div className="result-card">
-          <h3>Consejos personalizados IA</h3>
-          <p>
-            Aprovechá tus próximos años activos para fortalecer tu base de
-            aportes y planificar un ahorro complementario. La estabilidad
-            depende tanto del tiempo como de la constancia en tus
-            contribuciones.
-          </p>
+        {/* COLUMNA 2 – TERMÓMETRO */}
+        <div className="columna-thermo">
+          <StabilityThermometer valor={datos.estabilidad} />
         </div>
 
-        {/* TARJETA 3 - TERMÓMETRO */}
-        <div className="result-card">
-          <StabilityThermometer
-            level="moderado"
-            label="Moderado"
-            description="Tu situación es moderada. Con algunos años adicionales o un plan de seguros personales podés alcanzar mayor equilibrio."
-          />
+        {/* COLUMNA 3 – DETALLE */}
+        <div className="columna-detalle">
+          <div className="tarjeta-detalle">
+            <h3>Detalle del cálculo</h3>
 
-          <button
-            className="new-calc-btn"
-            type="button"
-            onClick={() => window.location.reload()}
-          >
+            {modo === "bps" ? (
+              <>
+                <p><strong>Ingreso declarado:</strong> ${formato(datos.detalle.ingreso)}</p>
+                <p><strong>Años aportados:</strong> {datos.detalle.añosAporte}</p>
+              </>
+            ) : (
+              <>
+                <p><strong>Año nacimiento:</strong> {datos.detalle.nacimiento}</p>
+                <p><strong>Habilitación:</strong> {datos.detalle.habilitacion}</p>
+                <p><strong>Categoría:</strong> {datos.detalle.categoria}</p>
+                <p><strong>Año simulado:</strong> {datos.detalle.anio}</p>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* COLUMNA 4 – ACCIONES */}
+        <div
+          className="columna-acciones"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+            justifyContent: "flex-start",
+          }}
+        >
+          <button className="btn-volver" onClick={nuevoCalculo}>
             Nuevo cálculo
           </button>
-        </div>
 
-        {/* TARJETA 4 - CONTACTO / SEGUROS PERSONALES */}
-        <div className="result-card contact-card">
-          <div className="contact-badge">Seguros personales</div>
-
-          <h3 className="contact-title">
-            ¿Querés complementar tu jubilación?
-          </h3>
-
-          <ul className="contact-list">
-            <li>
-              Plan de seguro (ahorro + vida/renta) para sumar un ingreso extra
-              al momento del retiro.
-            </li>
-            <li>
-              Cotización simple según tu edad, horizonte de retiro y objetivo de
-              ingreso.
-            </li>
-            <li>
-              Acompañamiento 1:1 para elegir una alternativa sostenible y
-              alineada con tus metas.
-            </li>
-          </ul>
-
-          <p className="contact-footnote">
-            Revisemos juntos tu situación y armemos un plan complementario con
-            seguros personales, sin costo de asesoría.
-          </p>
-
-          <a
-            href="https://wa.me/59897113110"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="whatsapp-cta"
+          <button
+            className="btn-volver"
+            style={{ backgroundColor: "#c9a449", color: "#2f3624" }}
+            onClick={() => descargarReportePDF(datos)}
           >
-            ANTICIPATE
-          </a>
-
-          <p className="contact-signature">
-            Lic. Jessica Páez – Asesora Técnica en Seguros Personales
-          </p>
+            Descargar reporte PDF
+          </button>
         </div>
       </div>
     </div>

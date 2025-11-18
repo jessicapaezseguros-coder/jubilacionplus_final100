@@ -1,100 +1,51 @@
-/* ALTURA ÚNICA DEL HEADER (se usa también para el padding del body) */
-:root {
-  --header-height: 130px;   /* si algún día querés subir/bajar el header, cambiás solo este valor */
-}
-
-/* HEADER FIJO EN VERDE MUSGO, CON LOGO RECORTADO + BYLINE */
+/* Header estable sin scale */
 
 .header {
   position: fixed;
   top: 0;
-  left: 0;
   width: 100%;
+  height: 120px; /* antes 130px — leve compacto */
+  background-color: #2f3624;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 1000;
-
-  background-color: #2f3624;        /* verde musgo */
-  border-bottom: 3px solid #c9a449; /* dorado suave */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: var(--header-height);     /* usa la variable */
 }
 
-.header-container {
-  max-width: 1200px;
-  width: 100%;
-  height: 100%;
-  padding: 0 24px;
+.header-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
 
+.header-row {
   display: flex;
   align-items: center;
-  justify-content: center;          /* bloque logo + byline centrado */
-  gap: 16px;                        /* acerca tu nombre al logo */
+  gap: 12px;
 }
 
-/* Bloque con logo (imagen completa recortada) */
-.header-logo-wrapper {
-  width: min(630px, 78vw);
-  height: 105px;                    /* alto del recorte del logo */
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Isotipo */
+.header-isotipo {
+  height: 78px;   /* antes 85px */
+  object-fit: contain;
 }
 
-/* Logo con zoom moderado y encuadre más centrado/alto */
-.header-logo {
-  display: block;
-  width: 112%;                      /* leve zoom */
-  height: auto;
-  object-fit: cover;
-  object-position: 50% 38%;
-  /* X: centrado horizontal
-     Y: subimos un poco el recorte => J completa + “Jubilación+” + “Herramienta Educativa con IA”
-     pero sin letras fantasma de la tercera línea */
-}
-
-/* Byline: tu nombre destacado, más pegado al logo */
-.header-byline {
-  font-family: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
-  font-size: 1.05rem;
+/* Título */
+.header-title {
+  font-size: 2.8rem;  /* antes 3rem */
+  color: #ffffff;
   font-weight: 600;
-  color: #fdf7e2;                   /* blanco cálido */
-  white-space: nowrap;
+  letter-spacing: 0.4px;
 }
 
-/* Compensa el header fijo para que no tape el contenido */
-body {
-  padding-top: var(--header-height);  /* SIEMPRE igual a la altura real del header */
-  background-color: #faf7f0;
+.mas {
+  color: #c9a449;
 }
 
-/* Ajustes en pantallas chicas */
-@media (max-width: 768px) {
-  :root {
-    --header-height: 120px;         /* un pelín más bajo en mobile */
-  }
-
-  .header-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .header-logo-wrapper {
-    width: min(420px, 90vw);
-    height: 95px;
-  }
-
-  .header-logo {
-    width: 118%;
-    object-position: 50% 38%;
-  }
-
-  .header-byline {
-    font-size: 0.9rem;
-  }
+/* Slogan */
+.header-slogan {
+  font-size: 0.92rem;
+  color: white;
+  letter-spacing: 0.35px;
 }

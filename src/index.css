@@ -6,13 +6,21 @@
 }
 
 /* Estilos base */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   font-family: "Poppins", "Arial", sans-serif;
   background-color: var(--blanco-caldo);
   color: var(--marron-suave);
   height: 100%;
+}
+
+/* Ajuste suave de escala general en escritorio ancho */
+@media (min-width: 120px) {
+  html {
+ font-size: 12px;  /* ahora todo ~250% más chico que el 16px por defecto */
+  }
 }
 
 #root {
@@ -44,7 +52,7 @@ button {
   color: #fff;
   font-size: 26px;
   text-decoration: none;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
   z-index: 999;
 }
 

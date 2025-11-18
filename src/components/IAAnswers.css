@@ -1,0 +1,80 @@
+/* -----------------------------------------------------------------------------
+   IAAnswers.css – Bloque educativo IA (Pantalla 1)
+   Estética congelada – Jubilación+
+----------------------------------------------------------------------------- */
+
+.ia-answers-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ia-answers-wrapper h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* BUSCADOR */
+.ia-search-bar {
+  position: relative;
+}
+
+.ia-search-bar input {
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #c9a449;
+  background: #ffffff;
+  font-size: 0.95rem;
+}
+
+.ia-search-bar .lupa {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #c9a449; /* dorado */
+}
+
+/* LISTA DE PREGUNTAS */
+.preguntas-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.preguntas-lista li {
+  padding: 8px 4px;
+  cursor: pointer;
+  border-bottom: 1px solid #e1dccf;
+  transition: background 0.2s ease;
+}
+
+.preguntas-lista li:hover {
+  background: #faf7f0;
+}
+
+.preguntas-lista li.activa {
+  background: #faf7f0;
+  font-weight: 700;
+}
+
+/* RESPUESTA */
+.respuesta-card {
+  margin-top: 6px;
+  background: #e3f3ed; /* verde pastel */
+  border: 2px solid #c9a449;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+}
+
+.footer-ia {
+  font-size: 0.75rem;
+  margin-top: 10px;
+  color: #2f3624;
+  opacity: 0.8;
+  font-style: italic;
+}
